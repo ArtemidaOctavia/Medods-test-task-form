@@ -3,31 +3,31 @@
     <form class="form" @submit.prevent="onSubmit" ref="form">
       <div class="form__group">
         <span class="form__input-title">Фамиля*</span>
-        <input class="form__input form__string-input"
+        <input class="form__input"
                v-model.trim='$v.client.lastName.$model'
                placeholder="Павлов"
                :class="{ 'form--input-invalid': this.$v.client.lastName.$error }"
         >
         <span class="form__input-title">Имя*</span>
-        <input class="form__input form__string-input"
+        <input class="form__input"
                id="firstName"
                v-model.trim='$v.client.firstName.$model'
                placeholder="Иван"
                :class="{ 'form--input-invalid': this.$v.client.firstName.$error }"
         >
         <span class="form__input-title">Отчество</span>
-        <input class="form__input form__string-input"
+        <input class="form__input"
                v-model='client.patronymic'
                placeholder="Петрович"
         >
         <span class="form__input-title">Дата рождения*</span>
-        <input class="form__input form__date-input"
+        <input class="form__input"
                type="date"
                v-model.trim='$v.client.birthDate.$model'
                :class="{ 'form--input-invalid': this.$v.client.birthDate.$error }"
         >
         <span class="form__input-title">Номер телефона</span>
-        <input class="form__input form__tel-input"
+        <input class="form__input"
                type="tel"
                v-model.trim='$v.client.phoneNumber.$model'
                v-on:change="onChange()"
@@ -54,17 +54,17 @@
           <label>Ж</label>
         </div>
         <span class="form__input-title">Категория пациентов</span>
-        <select class="form__input form__selector"
+        <select class="form__input"
                 multiple
                 v-model="$v.client.category.$model"
                 :class="{ 'form--input-invalid': this.$v.client.category.$error }"
         >
-          <option class="form__option">ОМС</option>
-          <option class="form__option">VIP</option>
-          <option class="form__option">Проблемные</option>
+          <option>ОМС</option>
+          <option>VIP</option>
+          <option>Проблемные</option>
         </select>
         <span class="form__input-title">Лечащий врач</span>
-        <select class="form__input form__selector" v-model="client.doctor">
+        <select class="form__input" v-model="client.doctor">
           <option v-for="doctor in doctors" :key="doctor.name">
             {{ doctor.name }}
           </option>
@@ -73,41 +73,41 @@
 
       <div class="form__group">
         <span class="form__input-title">Почтовый индекс</span>
-        <input class="form__input form__number-input" v-model="client.postIndex" type="number" placeholder="270015">
+        <input class="form__input" v-model="client.postIndex" type="number" placeholder="270015">
         <span class="form__input-title">Страна</span>
-        <input class="form__input form__string-input" v-model="client.country" placeholder="Россия">
+        <input class="form__input" v-model="client.country" placeholder="Россия">
         <span class="form__input-title">Область</span>
-        <input class="form__input form__string-input" v-model="client.region" placeholder="Иркутская">
+        <input class="form__input" v-model="client.region" placeholder="Иркутская">
         <span class="form__input-title">Город*</span>
-        <input class="form__input form__string-input"
+        <input class="form__input"
                placeholder="Иркутск"
                v-model.trim='$v.client.city.$model'
                :class="{ 'form--input-invalid': this.$v.client.city.$error }"
         >
         <span class="form__input-title">Улица</span>
-        <input class="form__input form__string-input" v-model="client.street" placeholder="Московская">
+        <input class="form__input" v-model="client.street" placeholder="Московская">
         <span class="form__input-title">Дом</span>
-        <input class="form__input form__string-input" v-model="client.house" placeholder="12-5">
+        <input class="form__input" v-model="client.house" placeholder="12-5">
       </div>
 
       <div class="form__group">
         <span class="form__input-title">Тип документа*</span>
-        <select class="form__input form__selector"
+        <select class="form__input"
                 v-model="$v.client.documentType.$model"
                 :class="{ 'form--input-invalid': this.$v.client.documentType.$error }"
         >
-          <option class="form__option">Паспорт</option>
-          <option class="form__option">Свидетельство</option>
-          <option class="form__option">Права</option>
+          <option>Паспорт</option>
+          <option>Свидетельство</option>
+          <option>Права</option>
         </select>
         <span class="form__input-title">Серия документа</span>
-        <input class="form__input form__number-input" type="number" v-model="client.series" placeholder="BM">
+        <input class="form__input" type="number" v-model="client.series" placeholder="BM">
         <span class="form__input-title">Номер документа</span>
-        <input class="form__input form__number-input" type="number" v-model="client.number" placeholder="3848623">
+        <input class="form__input" type="number" v-model="client.number" placeholder="3848623">
         <span class="form__input-title">Выдавший орган</span>
-        <input class="form__input form__string-input" v-model="client.issuedBy" placeholder="Октябрьское РОВД">
+        <input class="form__input" v-model="client.issuedBy" placeholder="Октябрьское РОВД">
         <span class="form__input-title">Дата выдачи*</span>
-        <input class="form__input form__date-input"
+        <input class="form__input"
                type="date"
                v-model="$v.client.dateOfIssue.$model"
                placeholder="Когда выдан"
@@ -233,7 +233,7 @@
     .form__submit-button
       border-radius: 10px
       border: cornflowerblue solid 2px
-      background-color: skyblue
+      background-color: powderblue
 
     .form--input-invalid
       border: solid red 2px
