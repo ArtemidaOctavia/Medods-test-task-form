@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/Medods-test-task-form/'
+  publicPath: 'Medods-test-task-form'
 }
