@@ -30,7 +30,7 @@
         <input class="form__input"
                type="tel"
                v-model.trim='$v.client.phoneNumber.$model'
-               v-on:change="onChange()"
+               @input="onChange"
                :class="{ 'form--input-invalid': this.$v.client.phoneNumber.$error }"
         >
         <small
