@@ -223,7 +223,7 @@
 
     .form-holder
       margin: 0 auto
-      max-width: 400px
+      max-width: 360px
 
     .form
       display: flex
@@ -253,7 +253,7 @@
       background-color: $buttonColor
       margin-top: 5px
       outline: 0
-      width: 300px
+      max-width: 300px
 
     .form__submit-button:active
       box-shadow: $buttonColor 0 0 10px
