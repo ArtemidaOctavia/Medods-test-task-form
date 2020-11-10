@@ -22,6 +22,7 @@
         >
         <span class="form__input-title">Дата рождения*</span>
         <input class="form__input"
+               @input="validateDate(`birthDate`)"
                type="date"
                v-model.trim='$v.client.birthDate.$model'
                :class="{ 'form--input-invalid': this.$v.client.birthDate.$error }"
@@ -30,7 +31,7 @@
         <input class="form__input"
                type="tel"
                v-model.trim='$v.client.phoneNumber.$model'
-               @input="onChange"
+               @input="onPhoneNumberChange"
                :class="{ 'form--input-invalid': this.$v.client.phoneNumber.$error }"
         >
         <small
@@ -109,6 +110,7 @@
         <span class="form__input-title">Дата выдачи*</span>
         <input class="form__input"
                type="date"
+               @input="validateDate(`dateOfIssue`)"
                v-model="$v.client.dateOfIssue.$model"
                placeholder="Когда выдан"
                :class="{ 'form--input-invalid': this.$v.client.dateOfIssue.$error }"
@@ -197,19 +199,31 @@
           event.target.reset()
         }, 2000)
       },
-      onChange() {
-        let newText = this.client.phoneNumber.split('');
+      onPhoneNumberChange() {
+        let newText = this.client.phoneNumber.split('')
         newText[0] = '7'
         this.client.phoneNumber = newText.join('')
+      },
+      validateDate(targetValue) {
+        let date = new Date
+        if (Number(this.client[`${targetValue}`].split('-')[0]) > 2020) {
+          let incorrectValue = this.client[`${targetValue}`].split('-')
+          incorrectValue[0] = String(date.getFullYear())
+          this.client[`${targetValue}`] = incorrectValue.join('-')
+        }
       }
     }
   }
 </script>
 
 <style lang="sass">
+    $mainColor: rgba(10, 140, 199, 0.9)
+    $errorColor: rgba(200, 0, 17, 0.9)
+    $buttonColor: rgba(10, 140, 199, 0.3)
 
     .form-holder
-      max-width: 200px
+      margin: 0 auto
+      max-width: 400px
 
     .form
       display: flex
@@ -222,27 +236,39 @@
 
     .form__input
       margin-bottom: 5px
-      border: solid cornflowerblue 2px
+      border: solid $mainColor 2px
       border-radius: 10px
       padding-left: 5px
       outline: 0
 
+    .form__input:focus
+      box-shadow: $mainColor 0 0 10px
+
     .form__input-title
-      color: dodgerblue
+      color: $mainColor
 
     .form__submit-button
       border-radius: 10px
-      border: cornflowerblue solid 2px
-      background-color: powderblue
+      border: $buttonColor solid 2px
+      background-color: $buttonColor
+      margin-top: 5px
+      outline: 0
+      width: 300px
+
+    .form__submit-button:active
+      box-shadow: $buttonColor 0 0 10px
 
     .form--input-invalid
-      border: solid red 2px
+      border: solid $errorColor 2px
+      box-shadow: $errorColor 0 0 5px
 
     .form__invalid-message
-      color: red
+      color: $errorColor
 
     .form__successMessage
+      text-align: center
       background-color: lightgreen
       border-radius: 10px
       padding: 10px
+
 </style>
