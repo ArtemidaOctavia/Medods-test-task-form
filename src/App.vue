@@ -285,11 +285,13 @@
 
     .form__submit-button
       border-radius: 10px
+      padding: 5px
+      font-size: 16px
       border: $buttonColor solid 2px
       background-color: $buttonColor
       margin-top: 5px
       outline: 0
-      max-width: 300px
+      max-width: 200px
 
     .form__submit-button:active
       box-shadow: $buttonColor 0 0 8px
