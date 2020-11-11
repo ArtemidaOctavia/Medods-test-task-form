@@ -3,23 +3,50 @@
     <form class="form" @submit.prevent="onSubmit" ref="form">
       <div class="form__group">
         <span class="form__input-title">Фамиля*</span>
-        <input class="form__input"
-               v-model.trim='$v.client.lastName.$model'
-               placeholder="Павлов"
-               :class="{ 'form--input-invalid': this.$v.client.lastName.$error }"
-        >
+        <div class="form__input-holder">
+          <input class="form__input form__alpha-input"
+                 v-model.trim='$v.client.lastName.$model'
+                 placeholder="Павлов"
+                 :class="{ 'form--input-invalid': this.$v.client.lastName.$error }"
+          >
+          <small
+            class="form__invalid-message"
+            v-if="!this.$v.client.lastName.rusAlpha"
+          >
+            Допускаются только буквы одного алфавита
+          </small>
+        </div>
         <span class="form__input-title">Имя*</span>
-        <input class="form__input"
-               id="firstName"
-               v-model.trim='$v.client.firstName.$model'
-               placeholder="Иван"
-               :class="{ 'form--input-invalid': this.$v.client.firstName.$error }"
-        >
+        <div class="form__input-holder">
+          <input class="form__input form__alpha-input"
+                 id="firstName"
+                 v-model.trim='$v.client.firstName.$model'
+                 placeholder="Иван"
+                 :class="{ 'form--input-invalid': this.$v.client.firstName.$error }"
+          >
+
+          <small
+            class="form__invalid-message"
+            v-if="!this.$v.client.firstName.rusAlpha"
+          >
+            Допускаются только буквы одного алфавита
+          </small>
+        </div>
         <span class="form__input-title">Отчество</span>
-        <input class="form__input"
-               v-model='client.patronymic'
-               placeholder="Петрович"
-        >
+        <div class="form__input-holder">
+          <input class="form__input form__alpha-input"
+                 v-model.trim='$v.client.patronymic.$model'
+                 placeholder="Петрович"
+                 :class="{ 'form--input-invalid': this.$v.client.patronymic.$error }"
+          >
+
+          <small
+            class="form__invalid-message"
+            v-if="!this.$v.client.patronymic.rusAlpha"
+          >
+            Допускаются только буквы одного алфавита
+          </small>
+        </div>
         <span class="form__input-title">Дата рождения*</span>
         <input class="form__input"
                @input="validateDate(`birthDate`)"
@@ -28,7 +55,7 @@
                :class="{ 'form--input-invalid': this.$v.client.birthDate.$error }"
         >
         <span class="form__input-title">Номер телефона</span>
-        <div class='form__phone-input-holder'>
+        <div class='form__input-holder'>
           <span class="form__phone-input-fixedNumber">+7</span>
           <input class="form__input form__phone-input"
                  type="tel"
@@ -36,13 +63,13 @@
                  :class="{ 'form--input-invalid': this.$v.client.phoneNumber.$error }"
           >
           <small
-            class="form__invalid-message form__phone-error-message"
+            class="form__invalid-message"
             v-if="!this.$v.client.phoneNumber.numeric"
           >
             Номер должен состоять только из цифр
           </small>
           <small
-            class="form__invalid-message form__phone-error-message"
+            class="form__invalid-message"
             v-else-if="(!this.$v.client.phoneNumber.maxLength || !this.$v.client.phoneNumber.minLength)
             && this.$v.client.phoneNumber.$dirty"
           >
@@ -78,7 +105,19 @@
         <span class="form__input-title">Почтовый индекс</span>
         <input class="form__input" v-model="client.postIndex" type="number" placeholder="270015">
         <span class="form__input-title">Страна</span>
-        <input class="form__input" v-model="client.country" placeholder="Россия">
+        <div class="form__input-holder">
+          <input class="form__input form__alpha-input"
+                 v-model.trim='$v.client.country.$model'
+                 placeholder="Россия"
+                 :class="{ 'form--input-invalid': this.$v.client.country.$error }"
+          >
+          <small
+            class="form__invalid-message"
+            v-if="!this.$v.client.country.rusAlpha"
+          >
+            Допускаются только буквы одного алфавита
+          </small>
+        </div>
         <span class="form__input-title">Область</span>
         <input class="form__input" v-model="client.region" placeholder="Иркутская">
         <span class="form__input-title">Город*</span>
@@ -104,7 +143,7 @@
           <option>Права</option>
         </select>
         <span class="form__input-title">Серия документа</span>
-        <input class="form__input" type="number" v-model="client.series" placeholder="BM">
+        <input class="form__input" v-model="client.series" placeholder="BM">
         <span class="form__input-title">Номер документа</span>
         <input class="form__input" type="number" v-model="client.number" placeholder="3848623">
         <span class="form__input-title">Выдавший орган</span>
@@ -138,6 +177,10 @@
 
 <script>
   import {minLength, maxLength, required, numeric} from 'vuelidate/lib/validators'
+
+  const rusAlpha = (value) => {
+    return /^[а-яё]*$/i.test(value) || /^[a-z]*$/i.test(value);
+  }
 
   export default {
     name: 'app',
@@ -178,21 +221,23 @@
     },
     validations: {
       client: {
-        lastName: {required},
-        firstName: {required},
+        lastName: {required, rusAlpha},
+        firstName: {required, rusAlpha},
+        patronymic: {rusAlpha},
         birthDate: {required},
         phoneNumber: {required, minLength: minLength(10), maxLength: maxLength(10), numeric},
         category: {required},
         city: {required},
         documentType: {required},
         dateOfIssue: {required},
+        country: {rusAlpha}
       }
     },
     methods: {
       fixPhoneNumber() {
-          let correctedNumber = this.client.phoneNumber.split('');
-          correctedNumber.unshift('7');
-          this.client.phoneNumber = correctedNumber.join('');
+        let correctedNumber = this.client.phoneNumber.split('');
+        correctedNumber.unshift('7');
+        this.client.phoneNumber = correctedNumber.join('');
       },
       onSubmit(event) {
         if (this.$v.$invalid) {
@@ -234,79 +279,83 @@
 
 <style lang="sass">
 
-    $borderColor: rgba( 0, 0, 0, 0.6)
-    $mainColor: rgba( 0, 0, 0, 0.9)
-    $errorColor: rgba(200, 0, 17, 0.9)
-    $buttonColor: rgba( 0, 0, 0, 0.1)
-    $successColor: rgba(100,255,127, 0.7)
+  $borderColor: rgba(0, 0, 0, 0.6)
+  $mainColor: rgba(0, 0, 0, 0.9)
+  $errorColor: rgba(200, 0, 17, 0.9)
+  $buttonColor: rgba(0, 0, 0, 0.1)
+  $successColor: rgba(100, 255, 127, 0.7)
 
-    .form-holder
-      margin: 0 auto
-      max-width: 360px
+  .form-holder
+    margin: 0 auto
+    max-width: 360px
 
-    .form
-      display: flex
-      flex-direction: column
+  .form
+    display: flex
+    flex-direction: column
 
-    .form__group
-      display: flex
-      flex-direction: column
-      margin-bottom: 10px
+  .form__group
+    display: flex
+    flex-direction: column
+    margin-bottom: 10px
 
-    .form__input
-      margin-bottom: 15px
-      margin-top: 5px
-      border: solid $borderColor 2px
-      border-radius: 7px
-      padding: 5px
-      outline: 0
+  .form__input
+    margin-bottom: 15px
+    margin-top: 5px
+    border: solid $borderColor 2px
+    border-radius: 7px
+    padding: 5px
+    outline: 0
 
-    .form__input:focus
-      box-shadow: $mainColor 0 0 3px
-      border: solid $mainColor 2px
+  .form__input:focus
+    box-shadow: $mainColor 0 0 3px
+    border: solid $mainColor 2px
 
-    .form__input-title
-      color: $mainColor
+  .form__input-title
+    color: $mainColor
 
-    .form__phone-input-holder
-      margin-bottom: 15px
-      display: flex
-      flex-direction: column
+  .form__input-holder
+    margin-bottom: 15px
+    display: flex
+    flex-direction: column
 
-    .form__phone-input-fixedNumber
-      position: absolute
-      padding-top: 11.5px
-      padding-left: 7px
-      font-size: 14px
+  .form__phone-input-fixedNumber
+    position: absolute
+    padding-top: 11.5px
+    padding-left: 7px
+    font-size: 14px
 
-    .form__phone-input
-      margin-bottom: 5px
-      padding-left: 22px
+  .form__phone-input
+    padding-left: 22px
+    margin-bottom: 0
 
-    .form__submit-button
-      border-radius: 10px
-      padding: 5px
-      font-size: 16px
-      border: $buttonColor solid 2px
-      background-color: $buttonColor
-      margin-top: 5px
-      outline: 0
-      max-width: 200px
+  .form__alpha-input
+    margin-bottom: 0
 
-    .form__submit-button:active
-      box-shadow: $buttonColor 0 0 8px
+  .form__submit-button
+    border-radius: 10px
+    padding: 5px
+    font-size: 16px
+    border: $buttonColor solid 2px
+    background-color: $buttonColor
+    margin-top: 5px
+    outline: 0
+    max-width: 200px
 
-    .form--input-invalid
-      border: solid $errorColor 2px
-      box-shadow: $errorColor 0 0 2px
+  .form__submit-button:active
+    box-shadow: $buttonColor 0 0 8px
 
-    .form__invalid-message
-      color: $errorColor
+  .form--input-invalid
+    border: solid $errorColor 2px
+    box-shadow: $errorColor 0 0 2px
 
-    .form__successMessage
-      text-align: center
-      background-color: $successColor
-      border-radius: 10px
-      padding: 10px
+  .form__invalid-message
+    margin-top: 5px
+    color: $errorColor
+
+  .form__successMessage
+    text-align: center
+    background-color: $successColor
+    border-radius: 10px
+    padding: 10px
 
 </style>
