@@ -234,6 +234,7 @@
 
 <style lang="sass">
 
+    $borderColor: rgba( 0, 0, 0, 0.6)
     $mainColor: rgba( 0, 0, 0, 0.9)
     $errorColor: rgba(200, 0, 17, 0.9)
     $buttonColor: rgba( 0, 0, 0, 0.1)
@@ -255,13 +256,14 @@
     .form__input
       margin-bottom: 15px
       margin-top: 5px
-      border: solid $mainColor 2px
+      border: solid $borderColor 2px
       border-radius: 7px
       padding: 5px
       outline: 0
 
     .form__input:focus
       box-shadow: $mainColor 0 0 3px
+      border: solid $mainColor 2px
 
     .form__input-title
       color: $mainColor
