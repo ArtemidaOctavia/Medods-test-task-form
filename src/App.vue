@@ -28,25 +28,27 @@
                :class="{ 'form--input-invalid': this.$v.client.birthDate.$error }"
         >
         <span class="form__input-title">Номер телефона</span>
-        <input class="form__input"
-               type="tel"
-               v-model.trim='$v.client.phoneNumber.$model'
-               @input="onPhoneNumberChange"
-               :class="{ 'form--input-invalid': this.$v.client.phoneNumber.$error }"
-        >
-        <small
-          class="form__invalid-message"
-          v-if="!this.$v.client.phoneNumber.numeric"
-        >
-          Номер должен состоять только из цифр
-        </small>
-        <small
-          class="form__invalid-message"
-          v-else-if="(!this.$v.client.phoneNumber.maxLength || !this.$v.client.phoneNumber.minLength)
-          && this.$v.client.phoneNumber.$dirty"
-        >
-          Номер должен состоять из 11-и символов, у вас {{this.client.phoneNumber.length}}
-        </small>
+        <div class='form__phone-input-holder'>
+          <span class="form__phone-input-fixedNumber">+7</span>
+          <input class="form__input form__phone-input"
+                 type="tel"
+                 v-model.trim='$v.client.phoneNumber.$model'
+                 :class="{ 'form--input-invalid': this.$v.client.phoneNumber.$error }"
+          >
+          <small
+            class="form__invalid-message form__phone-error-message"
+            v-if="!this.$v.client.phoneNumber.numeric"
+          >
+            Номер должен состоять только из цифр
+          </small>
+          <small
+            class="form__invalid-message form__phone-error-message"
+            v-else-if="(!this.$v.client.phoneNumber.maxLength || !this.$v.client.phoneNumber.minLength)
+            && this.$v.client.phoneNumber.$dirty"
+          >
+            Номер должен состоять из 10-и символов, у вас {{this.client.phoneNumber.length}}
+          </small>
+        </div>
         <span class="form__input-title">Пол</span>
         <div class="form__input">
           <input type="radio" value="М" v-model="client.gender">
@@ -152,7 +154,7 @@
           firstName: '',
           patronymic: '',
           birthDate: '',
-          phoneNumber: '7',
+          phoneNumber: '',
           gender: 'М',
           category: [],
           doctor: '',
@@ -179,37 +181,51 @@
         lastName: {required},
         firstName: {required},
         birthDate: {required},
-        phoneNumber: {required, minLength: minLength(11), maxLength: maxLength(11), numeric},
+        phoneNumber: {required, minLength: minLength(10), maxLength: maxLength(10), numeric},
         category: {required},
         city: {required},
         documentType: {required},
-        dateOfIssue: {required}
+        dateOfIssue: {required},
       }
     },
     methods: {
+      fixPhoneNumber() {
+          let correctedNumber = this.client.phoneNumber.split('');
+          correctedNumber.unshift('7');
+          this.client.phoneNumber = correctedNumber.join('');
+      },
       onSubmit(event) {
         if (this.$v.$invalid) {
-          this.$v.$touch()
-          return
+          this.$v.$touch();
+          return;
         }
-        this.clients.push(this.client)
-        this.showSuccessMessage = true
+        this.fixPhoneNumber();
+        this.clients.push(this.client);
+        this.showSuccessMessage = true;
         setTimeout(() => {
-          this.showSuccessMessage = false
-          event.target.reset()
+          this.showSuccessMessage = false;
+          event.target.reset();
         }, 2000)
-      },
-      onPhoneNumberChange() {
-        let newText = this.client.phoneNumber.split('')
-        newText[0] = '7'
-        this.client.phoneNumber = newText.join('')
+        let phoneNumber = this.client.phoneNumber.split('')
+        phoneNumber.shift()
+        this.client.phoneNumber = phoneNumber.join('')
       },
       validateDate(targetValue) {
-        let date = new Date
-        if (Number(this.client[`${targetValue}`].split('-')[0]) > 2020) {
-          let incorrectValue = this.client[`${targetValue}`].split('-')
-          incorrectValue[0] = String(date.getFullYear())
-          this.client[`${targetValue}`] = incorrectValue.join('-')
+        let date = new Date;
+        let value = this.client[`${targetValue}`].split('-');
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDate();
+        if (
+          Number(value[0]) > year ||
+          (Number(value[0]) === year && Number(value[1]) > (month + 1)) ||
+          (Number(value[0]) === year && Number(value[1]) === (month + 1) && Number(value[2]) > day)
+        ) {
+          let incorrectValue = value;
+          incorrectValue[0] = String(year);
+          incorrectValue[1] = String((month + 1));
+          incorrectValue[2] = String(day);
+          this.client[`${targetValue}`] = incorrectValue.join('-');
         }
       }
     }
@@ -217,9 +233,11 @@
 </script>
 
 <style lang="sass">
-    $mainColor: rgba(10, 140, 199, 0.9)
+
+    $mainColor: rgba( 0, 0, 0, 0.9)
     $errorColor: rgba(200, 0, 17, 0.9)
-    $buttonColor: rgba(10, 140, 199, 0.3)
+    $buttonColor: rgba( 0, 0, 0, 0.1)
+    $successColor: rgba(100,255,127, 0.7)
 
     .form-holder
       margin: 0 auto
@@ -235,17 +253,33 @@
       margin-bottom: 10px
 
     .form__input
-      margin-bottom: 5px
+      margin-bottom: 15px
+      margin-top: 5px
       border: solid $mainColor 2px
-      border-radius: 10px
-      padding-left: 5px
+      border-radius: 7px
+      padding: 5px
       outline: 0
 
     .form__input:focus
-      box-shadow: $mainColor 0 0 10px
+      box-shadow: $mainColor 0 0 3px
 
     .form__input-title
       color: $mainColor
+
+    .form__phone-input-holder
+      margin-bottom: 15px
+      display: flex
+      flex-direction: column
+
+    .form__phone-input-fixedNumber
+      position: absolute
+      padding-top: 11.5px
+      padding-left: 7px
+      font-size: 14px
+
+    .form__phone-input
+      margin-bottom: 5px
+      padding-left: 22px
 
     .form__submit-button
       border-radius: 10px
@@ -256,18 +290,18 @@
       max-width: 300px
 
     .form__submit-button:active
-      box-shadow: $buttonColor 0 0 10px
+      box-shadow: $buttonColor 0 0 8px
 
     .form--input-invalid
       border: solid $errorColor 2px
-      box-shadow: $errorColor 0 0 5px
+      box-shadow: $errorColor 0 0 2px
 
     .form__invalid-message
       color: $errorColor
 
     .form__successMessage
       text-align: center
-      background-color: lightgreen
+      background-color: $successColor
       border-radius: 10px
       padding: 10px
 
